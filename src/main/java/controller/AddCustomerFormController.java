@@ -17,6 +17,7 @@ import java.net.URL;
 import java.text.ParseException;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.logging.Logger;
 
 
 public class AddCustomerFormController implements Initializable {
@@ -39,6 +40,8 @@ public class AddCustomerFormController implements Initializable {
     @FXML
     private JFXTextField txtName;
 
+    Logger logger = Logger.getLogger(getClass().getName());
+
     //initialize object variable for data validations
     DataValidation dataValidation;
 
@@ -47,7 +50,7 @@ public class AddCustomerFormController implements Initializable {
         List<Customer> customerList = DBConnection.getInstance().getConnection();
 
         //get Data for validations
-        String id = txtCustomerID.getText();
+        String id = txtCustomerID.getText().toUpperCase();
         String dob = txtDateOfBirth.getValue() != null ? txtDateOfBirth.getValue().toString() : null;
         String contact = txtContact.getText();
 
@@ -83,7 +86,7 @@ public class AddCustomerFormController implements Initializable {
         }
 
         //For debugging purposes
-        customerList.forEach(ob -> System.out.println(ob.toString()));
+        customerList.forEach(ob -> logger.info(ob.toString()));
     }
 
     @FXML

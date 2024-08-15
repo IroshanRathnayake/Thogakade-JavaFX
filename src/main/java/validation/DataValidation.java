@@ -36,4 +36,16 @@ public class DataValidation {
     public boolean validateContact(String contact){
         return contact.length() !=10 && contact.charAt(0) !=0 ;
     }
+
+    public int searchCustomer(List<Customer> customerList, String value){
+        value = value.toUpperCase();
+
+        for (Customer customer : customerList){
+            if (customer.getCustomerID().equals(value) ||
+                    customer.getContact().equals(value)){
+                return customerList.indexOf(customer);
+            }
+        }
+        return -1;
+    }
 }

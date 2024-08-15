@@ -63,6 +63,4 @@ public class ViewCustomerFormController implements Initializable {
 
         tblCustomers.setItems(observableList);
     }
-
-
 }
