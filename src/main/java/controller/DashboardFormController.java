@@ -13,12 +13,24 @@ import java.io.IOException;
 
 public class DashboardFormController {
 
+
     @FXML
     private JFXButton btnAddNewCustomer;
 
     @FXML
     private JFXButton btnManageCustomer;
 
+    @FXML
+    public JFXButton btnViewCustomer;
+
+
+    //Icon Logo Path
+    String logoPath = "img/logo.png";
+
+    //Custom Error Alert
+    Alert errorAlert = new Alert(Alert.AlertType.ERROR, "Error: \n IOException Error!");
+
+    //Add New Customer (/add_customer_form)
     @FXML
     void btnAddNewCustomerOnAction(ActionEvent event) {
         try{
@@ -27,14 +39,15 @@ public class DashboardFormController {
                     FXMLLoader.load(getClass().getResource("/view/add_customer_form.fxml"))
             ));
             stage.setTitle("Add New Customer");
-            stage.getIcons().add(new Image("img/logo.png"));
+            stage.getIcons().add(new Image(logoPath));
             stage.show();
         }catch (IOException e){
-            new Alert(Alert.AlertType.ERROR, "Error: \n"+e);
+            errorAlert.show();
             throw new RuntimeException(e);
         }
     }
 
+    //Manage Customer (/manage_customer_form)
     @FXML
     void btnManageCustomerOnAction(ActionEvent event) {
         try{
@@ -43,14 +56,15 @@ public class DashboardFormController {
                     FXMLLoader.load(getClass().getResource("/view/manage_customer_form.fxml"))
             ));
             stage.setTitle("Manage Customer");
-            stage.getIcons().add(new Image("img/logo.png"));
+            stage.getIcons().add(new Image(logoPath));
             stage.show();
         }catch (IOException e){
-            new Alert(Alert.AlertType.ERROR, "Error: \n"+e);
+            errorAlert.show();
             throw new RuntimeException(e);
         }
     }
 
+    //View Customer (/view_customer_form)
     @FXML
     void btnViewCustomerOnAction(ActionEvent event) {
         try{
@@ -59,10 +73,10 @@ public class DashboardFormController {
                     FXMLLoader.load(getClass().getResource("/view/view_customer_form.fxml"))
             ));
             stage.setTitle("View Customer");
-            stage.getIcons().add(new Image("img/logo.png"));
+            stage.getIcons().add(new Image(logoPath));
             stage.show();
         }catch (IOException e){
-            new Alert(Alert.AlertType.ERROR, "Error: \n"+e);
+            errorAlert.show();
             throw new RuntimeException(e);
         }
     }
