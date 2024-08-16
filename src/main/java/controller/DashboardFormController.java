@@ -1,3 +1,7 @@
+//Thogakade POS CRUD - JavaFx Task
+//Author : @Iroshan-Rathnayake (RegNo: OR24110322 )
+//PRF - iCD 110
+
 package controller;
 
 import com.jfoenix.controls.JFXButton;
