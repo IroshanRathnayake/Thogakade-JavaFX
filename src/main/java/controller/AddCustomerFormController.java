@@ -15,6 +15,7 @@ import javafx.scene.image.Image;
 
 import java.net.URL;
 import java.text.ParseException;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Logger;
@@ -51,42 +52,53 @@ public class AddCustomerFormController implements Initializable {
 
         //get Data for validations
         String id = txtCustomerID.getText().toUpperCase();
-        String dob = txtDateOfBirth.getValue() != null ? txtDateOfBirth.getValue().toString() : null;
+        String title = cmbTitle.getValue();
+        String name = txtName.getText();
         String contact = txtContact.getText();
+        String address = txtAddress.getText();
+        LocalDate dob = txtDateOfBirth.getValue();
 
-        try{
-            //Validate Customer ID, Birthday & Contact
-            if (!dataValidation.isDuplicateID(customerList, id) && !dataValidation.validateDOB(dob) && !dataValidation.validateContact(contact)) {
-                customerList.add(new Customer(
-                        id,
-                        cmbTitle.getValue(),
-                        txtName.getText(),
-                        txtAddress.getText(),
-                        txtContact.getText(),
-                        txtDateOfBirth.getValue()
-                ));
-                showAlert(Alert.AlertType.INFORMATION,
-                        "Successfully Added",
-                        "Customer added successfully!",
-                        "img/success-48.png");
-                clearField();
-            } else {
-                showAlert(Alert.AlertType.WARNING,
-                        "Warning",
-                        "Warning: \nInvalid inputs are Occurred. \n\n" +
-                                "Check following data : \n\t[1] Duplicate Customer ID\n\t[2] Invalid Contact (07xxxxxxxx) \n\t[3]Invalid Birthday format" +
-                                "\n\n\tPlease input valid data!",
-                        "img/warning-48.png");
+        Customer checkNullObj = new Customer(id,title,name,address,contact,dob);
+
+        //Check is fields null
+        if(!dataValidation.isNull(checkNullObj)){
+            try{
+                //Validate Customer ID, Birthday & Contact
+                if (!dataValidation.isDuplicateID(customerList, id) && !dataValidation.validateDOB(dob.toString()) && !dataValidation.validateContact(contact)) {
+                    //Add data to Array-List
+                    customerList.add(new Customer(
+                            id,
+                            title,
+                            name,
+                            address,
+                            contact,
+                            dob
+                    ));
+                    showAlert(Alert.AlertType.INFORMATION,
+                            "Successfully Added",
+                            "Customer added successfully!",
+                            "img/success-48.png");
+                    clearField();
+                } else {
+                    showAlert(Alert.AlertType.WARNING,
+                            "Warning",
+                            "Warning: \nInvalid inputs are Occurred. \n\n" +
+                                    "Check following data : \n\t[1] Duplicate Customer ID\n\t[2] Invalid Contact (07xxxxxxxx) \n\t[3]Invalid Birthday format" +
+                                    "\n\n\tPlease input valid data!",
+                            "img/warning-48.png");
+                }
+            }catch (ParseException e){
+                showAlert(Alert.AlertType.ERROR,
+                        "Error","Invalid date format. Please enter a valid date of birth.", "img/error-48.png");
+            }catch (Exception e){
+                showAlert(Alert.AlertType.ERROR,"Error","An unexpected error occurred: \n"+e.getMessage(), "img/error-48.png");
             }
-        }catch (ParseException e){
-            showAlert(Alert.AlertType.ERROR,
-                    "Error","Invalid date format. Please enter a valid date of birth.", "img/error-48.png");
-        }catch (Exception e){
-            showAlert(Alert.AlertType.ERROR,"Error","An unexpected error occurred: \n"+e.getMessage(), "img/error-48.png");
+        }else{
+            showAlert(Alert.AlertType.WARNING,"Warning","Please fill all the fields!", "img/warning-48.png");
         }
 
         //For debugging purposes
-        customerList.forEach(ob -> logger.info(ob.toString()));
+        //customerList.forEach(ob -> logger.info(ob.toString()));
     }
 
     @FXML
@@ -97,7 +109,7 @@ public class AddCustomerFormController implements Initializable {
 
     //Clear all the textFields to null
     private void clearField() {
-        txtCustomerID.setText(null);
+        txtCustomerID.setText("");
         cmbTitle.setValue(null);
         txtName.setText(null);
         txtAddress.setText(null);

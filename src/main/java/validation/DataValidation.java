@@ -10,6 +10,15 @@ import java.util.List;
 
 public class DataValidation {
 
+    public boolean isNull(Customer customer){
+        return customer.getCustomerID() == null ||
+                customer.getTitle() == null ||
+                customer.getName() == null ||
+                customer.getAddress() == null ||
+                customer.getContact() == null ||
+                customer.getDateOfBirth() == null;
+    }
+
     public boolean isDuplicateID(List<Customer> customerList, String id){
         //Check Duplicate Customer IDs
         for (Customer customer : customerList){

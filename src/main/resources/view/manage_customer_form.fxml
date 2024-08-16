@@ -70,7 +70,7 @@
          </font>
       </JFXTextField>
       <JFXComboBox fx:id="cmbTitle" focusColor="#0dcfdb" layoutX="598.0" layoutY="264.0" prefHeight="36.0" prefWidth="72.0" promptText="Title" />
-      <DatePicker fx:id="txtDateOfBirth" editable="false" layoutX="598.0" layoutY="440.0" prefHeight="36.0" prefWidth="262.0" promptText="Date Of Birth - DD/MM/YYYY" styleClass="date-picker" stylesheets="@../css/Datepicker.css">
+      <DatePicker fx:id="txtDateOfBirth" editable="false" layoutX="598.0" layoutY="440.0" prefHeight="36.0" prefWidth="262.0" promptText="Date Of Birth" styleClass="date-picker" stylesheets="@../css/Datepicker.css">
          <opaqueInsets>
             <Insets />
          </opaqueInsets>

@@ -2,6 +2,7 @@ package db;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import lombok.Getter;
 import model.Customer;
 
 import java.util.ArrayList;
@@ -13,11 +14,14 @@ public class DBConnection {
     private final List<Customer> customerList;
 
     //Title list
+    @Getter
     private ObservableList<String> titles;
 
     private DBConnection(){
         customerList = new ArrayList<>();
         titles = FXCollections.observableArrayList();
+        titles.add("Mr.");
+        titles.add("Miss.");
     }
 
     public static DBConnection getInstance(){
@@ -30,14 +34,6 @@ public class DBConnection {
     //Get customer array-list
     public List<Customer> getConnection(){
         return customerList;
-    }
-
-    //Get titles list
-    public ObservableList<String> getTitles(){
-        titles.add("Mr.");
-        titles.add("Miss");
-
-        return titles;
     }
 
 }

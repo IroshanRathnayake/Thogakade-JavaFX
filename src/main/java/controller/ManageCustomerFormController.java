@@ -21,6 +21,7 @@ import validation.DataValidation;
 
 import java.net.URL;
 import java.text.ParseException;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -89,12 +90,25 @@ public class ManageCustomerFormController implements Initializable {
 
         loadTable();
 
-        //Listener to get user selected object
-        tblCustomers.getSelectionModel().selectedItemProperty().addListener((observableValue, customer, newValue) -> {
-            index = DBConnection.getInstance().getConnection().indexOf(newValue);
-            enableItems();
-            setTextToValues(newValue);
-        });
+        try{
+            // Check if tblCustomers and it's selection model are not null
+            if (tblCustomers != null && tblCustomers.getSelectionModel() != null) {
+                // Listener to get user selected object
+                tblCustomers.getSelectionModel().selectedItemProperty().addListener((observableValue, customer, newValue) -> {
+                    if (newValue != null) {
+                        int customerIndex = DBConnection.getInstance().getConnection().indexOf(newValue);
+                        if (customerIndex != -1) {
+                            index = customerIndex;
+                            enableItems();
+                            setTextToValues(newValue);
+                        }
+                    }
+                });
+            }
+        }catch (Exception e){
+            showAlert(Alert.AlertType.ERROR,"Error","Error: "+e , "img/error-48.png");
+        }
+
     }
 
     //Reload Button Action
@@ -118,67 +132,73 @@ public class ManageCustomerFormController implements Initializable {
 
     //Update Button Action
     @FXML
-    void btnUpdateOnAction(ActionEvent event) {
+    void btnUpdateOnAction(ActionEvent event){
         //get Data for validations
         String id = txtCustomerID.getText().toUpperCase();
-        String dob = txtDateOfBirth.getValue() != null ? txtDateOfBirth.getValue().toString() : null;
+        String title = cmbTitle.getValue();
+        String name = txtName.getText();
+        String address = txtAddress.getText();
         String contact = txtContact.getText();
+        LocalDate dob = txtDateOfBirth.getValue();
 
-        try{
-            //Validate Customer ID, Birthday & Contact
-            if (!dataValidation.validateDOB(dob) && !dataValidation.validateContact(contact)) {
-                customerList.set(index,new Customer(
-                        id,
-                        cmbTitle.getValue(),
-                        txtName.getText(),
-                        txtAddress.getText(),
-                        txtContact.getText(),
-                        txtDateOfBirth.getValue()
-                ));
-                showAlert(Alert.AlertType.INFORMATION,
-                        "Thogakade System",
-                        "Customer Updated successfully!",
-                        "img/success-48.png");
-                clearField();
-            } else {
-                showAlert(Alert.AlertType.WARNING,
-                        "Warning",
-                        "Warning: \nInvalid inputs are Occurred. \n\n" +
-                                "Check following data : \n\t[1] Duplicate Customer ID\n\t[2] Invalid Contact (07xxxxxxxx) \n\t[3]Invalid Birthday format" +
-                                "\n\n\tPlease input valid data!",
-                        "img/warning-48.png");
+        Customer checkNullObj = new Customer(id,title,name,address,contact,dob);
+
+        if(!dataValidation.isNull(checkNullObj)){
+            try{
+                //Validate Customer ID, Birthday & Contact
+                if (!dataValidation.validateDOB(dob.toString()) && !dataValidation.validateContact(contact)) {
+                    customerList.set(index,new Customer(
+                            id,
+                            cmbTitle.getValue(),
+                            txtName.getText(),
+                            txtAddress.getText(),
+                            txtContact.getText(),
+                            txtDateOfBirth.getValue()
+                    ));
+                    showAlert(Alert.AlertType.INFORMATION,
+                            "Thogakade System",
+                            "Customer Updated successfully!",
+                            "img/success-48.png");
+                    clearField();
+                    loadTable();
+                } else {
+                    showAlert(Alert.AlertType.WARNING,
+                            "Warning",
+                            "Warning: \nInvalid inputs are Occurred. \n\n" +
+                                    "Check following data : \n\t[1] Duplicate Customer ID\n\t[2] Invalid Contact (07xxxxxxxx) \n\t[3]Invalid Birthday format" +
+                                    "\n\n\tPlease input valid data!",
+                            "img/warning-48.png");
+                }
+            }catch (ParseException e){
+                showAlert(Alert.AlertType.ERROR,
+                        "Error","Invalid date format. Please enter a valid date of birth.", "img/error-48.png");
+            }catch (Exception e){
+                showAlert(Alert.AlertType.ERROR,"Error","An unexpected error occurred: \n"+e.getMessage(), "img/error-48.png");
             }
-        }catch (ParseException e){
-            showAlert(Alert.AlertType.ERROR,
-                    "Error","Invalid date format. Please enter a valid date of birth.", "img/error-48.png");
-        }catch (Exception e){
-            showAlert(Alert.AlertType.ERROR,"Error","An unexpected error occurred: \n"+e.getMessage(), "img/error-48.png");
+        }else {
+            showAlert(Alert.AlertType.WARNING,"Warning","Please fill all the fields!", "img/warning-48.png");
         }
-
-        loadTable();
     }
 
     //Search Button Action
     @FXML
     void btnSearchOnAction(ActionEvent event) {
         searchCustomerAction();
-        enableItems();
     }
 
     //Search textField Action
     @FXML
     void txtSearchOnAction(ActionEvent event) {
         searchCustomerAction();
-        enableItems();
     }
 
     //Search Customer
     private void searchCustomerAction(){
-        int indexOfCustomer = dataValidation.searchCustomer(customerList
-                ,txtSearch.getText());
+        int indexOfCustomer = dataValidation.searchCustomer(customerList,txtSearch.getText());
         if (indexOfCustomer >= 0){
-            setTextToValues(customerList
-                    .get(indexOfCustomer));
+            index = indexOfCustomer;
+            setTextToValues(customerList.get(indexOfCustomer));
+            enableItems();
         }else {
             showAlert(Alert.AlertType.INFORMATION,
                     "Information",
@@ -218,7 +238,7 @@ public class ManageCustomerFormController implements Initializable {
 
     //Clear all the textFields to null
     private void clearField() {
-        txtCustomerID.setText(null);
+        txtCustomerID.setText("");
         cmbTitle.setValue(null);
         cmbTitle.setItems(null);
         txtName.setText(null);
@@ -233,6 +253,8 @@ public class ManageCustomerFormController implements Initializable {
         txtAddress.setEditable(false);
         txtContact.setEditable(false);
         txtDateOfBirth.setEditable(false);
+
+        txtSearch.setText("");
     }
 
     //Enable Items
